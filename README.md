@@ -3,7 +3,12 @@
 Welcome to the MarketNest eCommerce Web App!
 
 ## Overview
-MarketNest is a full-stack e-commerce solution separated into functional frontend and backend modules.
+MarketNest is a full-stack e-commerce marketplace platform that allows users to browse products, manage shopping carts, and handle checkouts securely. It features a modern, responsive user interface and a robust backend API for seamless shopping experiences.
+
+## Tech Stack
+**Frontend:** React 19 (Vite), Tailwind CSS, Zustand (State Management), React Query, and React Router.
+**Backend:** Java 17, Spring Boot 3, PostgreSQL (with Flyway), Redis, and JWT Authentication.
+
 
 ### Structure
 - `marketplace-backend/`: Contains the backend API, logic, and database integrations.
