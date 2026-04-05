@@ -9,6 +9,8 @@ export interface Vendor {
     storeLogoUrl?: string;
     storeBannerUrl?: string;
     status: VendorStatus;
+    ratingAverage?: number;
+    ratingCount?: number;
     createdAt: string;
 }
 

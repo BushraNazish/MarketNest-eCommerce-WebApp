@@ -7,7 +7,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/markethub_db
     username: postgres
-    password: ${DB_PASSWORD:Avi@8210}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -42,27 +42,27 @@ jwt:
   refresh-token-expiry: 604800000  # 7 days
 
 razorpay:
-  key-id: ${RAZORPAY_KEY_ID}
-  key-secret: ${RAZORPAY_KEY_SECRET}
-  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET}
+  key-id: ${RAZORPAY_KEY_ID:rzp_test_0lvzwhFlbW5MNz}
+  key-secret: ${RAZORPAY_KEY_SECRET:f1EubYPxpAKfHi03iBriFcmP}
+  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
 
 sendgrid:
-  api-key: ${SENDGRID_API_KEY}
+  api-key: ${SENDGRID_API_KEY:dummy}
   from-email: noreply@markethub.com
   from-name: MarketHub
 
 msg91:
-  auth-key: ${MSG91_AUTH_KEY}
+  auth-key: ${MSG91_AUTH_KEY:dummy}
   sender-id: MKTHUB
   route: 4
 
 cloudinary:
-  cloud-name: ${CLOUDINARY_CLOUD_NAME}
-  api-key: ${CLOUDINARY_API_KEY}
-  api-secret: ${CLOUDINARY_API_SECRET}
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:dummy}
+  api-key: ${CLOUDINARY_API_KEY:dummy}
+  api-secret: ${CLOUDINARY_API_SECRET:dummy}
 
 server:
-  port: 8081
+  port: 8080
   error:
     include-message: always
     include-binding-errors: always

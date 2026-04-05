@@ -33,7 +33,13 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/api/v1/auth/**", "/api/v1/health", "/swagger-ui/**", "/v3/api-docs/**", "/error")
+                        req.requestMatchers(org.springframework.http.HttpMethod.GET, 
+                                "/api/v1/reviews/products/**", 
+                                "/api/v1/reviews/sellers/**",
+                                "/api/v1/products/**",
+                                "/api/v1/vendor/*/public",
+                                "/api/v1/categories/**").permitAll()
+                           .requestMatchers("/api/v1/auth/**", "/api/v1/health", "/swagger-ui/**", "/v3/api-docs/**", "/error")
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()

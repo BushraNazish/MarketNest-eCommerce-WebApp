@@ -7,7 +7,10 @@ import com.markethub.vendor.dto.VendorDto;
 import com.markethub.vendor.entity.Vendor;
 import com.markethub.vendor.entity.VendorStatus;
 import com.markethub.vendor.repository.VendorRepository;
+import com.markethub.order.repository.SubOrderRepository;
+import com.markethub.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +23,8 @@ public class VendorService {
 
     private final VendorRepository vendorRepository;
     private final UserRepository userRepository;
+    private final SubOrderRepository subOrderRepository;
+    private final ProductRepository productRepository;
 
     @Transactional
     public VendorDto.Response createShop(VendorDto.CreateRequest request) {
@@ -71,6 +76,58 @@ public class VendorService {
         return mapToResponse(vendor);
     }
 
+    @Transactional(readOnly = true)
+    public VendorDto.Response getVendorProfile(java.util.UUID vendorId) {
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+
+        if (vendor.getStatus() != VendorStatus.APPROVED && vendor.getStatus() != VendorStatus.PENDING) {
+            throw new RuntimeException("Vendor profile is not available");
+        }
+
+        return mapToResponse(vendor);
+    }
+
+    @Transactional(readOnly = true)
+    public com.markethub.vendor.dto.VendorDashboardStatsDto getVendorDashboardStats() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Vendor vendor = vendorRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("No shop found for this user"));
+
+        BigDecimal totalSales = subOrderRepository.calculateTotalSalesByVendor(vendor.getId());
+        if (totalSales == null) {
+            totalSales = BigDecimal.ZERO;
+        }
+
+        long totalOrders = subOrderRepository.countByVendorId(vendor.getId());
+        long totalProducts = productRepository.countByVendorId(vendor.getId());
+
+        return com.markethub.vendor.dto.VendorDashboardStatsDto.builder()
+                .totalSales(totalSales)
+                .totalOrders(totalOrders)
+                .totalProducts(totalProducts)
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.List<VendorDto.Response> getAllVendors() {
+        return vendorRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    @Transactional
+    public VendorDto.Response updateVendorStatus(java.util.UUID vendorId, VendorStatus status) {
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+        vendor.setStatus(status);
+        vendor = vendorRepository.save(vendor);
+        return mapToResponse(vendor);
+    }
+
     private VendorDto.Response mapToResponse(Vendor vendor) {
         return VendorDto.Response.builder()
                 .id(vendor.getId().toString())
@@ -81,6 +138,8 @@ public class VendorService {
                 .storeLogoUrl(vendor.getStoreLogoUrl())
                 .storeBannerUrl(vendor.getStoreBannerUrl())
                 .status(vendor.getStatus())
+                .ratingAverage(vendor.getRatingAverage())
+                .ratingCount(vendor.getRatingCount())
                 .createdAt(vendor.getCreatedAt() != null ? vendor.getCreatedAt().toString() : LocalDateTime.now().toString())
                 .build();
     }

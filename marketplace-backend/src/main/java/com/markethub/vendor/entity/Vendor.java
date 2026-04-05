@@ -8,6 +8,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -57,6 +58,14 @@ public class Vendor {
     @Column(columnDefinition = "vendor_status")
     @Builder.Default
     private VendorStatus status = VendorStatus.PENDING;
+
+    @Column(name = "rating_average", precision = 3, scale = 2)
+    @Builder.Default
+    private BigDecimal ratingAverage = BigDecimal.ZERO;
+
+    @Column(name = "rating_count")
+    @Builder.Default
+    private Integer ratingCount = 0;
 
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;

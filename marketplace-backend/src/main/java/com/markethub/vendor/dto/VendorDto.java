@@ -37,6 +37,8 @@ public class VendorDto {
         private String storeLogoUrl;
         private String storeBannerUrl;
         private VendorStatus status;
+        private java.math.BigDecimal ratingAverage;
+        private Integer ratingCount;
         private String createdAt;
     }
 }
